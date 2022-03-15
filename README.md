@@ -4,7 +4,7 @@ font-awesome-to-png-java
 java program to make png icon from ttf font files.
 
 This program is JAVA version to extract the awesome
-[Font Awesome] (http://fortawesome.github.com/Font-Awesome/) icons as PNG icons with each character.
+[Font Awesome](http://fortawesome.github.com/Font-Awesome/) icons as PNG icons with each character.
 
 ### Usage
 
@@ -21,5 +21,5 @@ This program is JAVA version to extract the awesome
     --iconsize=SIZE	PNG icon size
 
 To use the program, you need the Font Awesome TTF file, which is available in
-[Font Awesome Github repository] (https://github.com/FortAwesome/Font-Awesome).
+[Font Awesome Github repository](https://github.com/FortAwesome/Font-Awesome).
 
