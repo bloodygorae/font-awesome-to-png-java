@@ -26,32 +26,32 @@ public class FontConverter
 		String ttffile = params.get("font");
 		String outputdir = params.get("output");
 		
-		outputdir = (outputdir.endsWith("/") == true) ? outputdir : outputdir + "/";
+		outputdir = outputdir.endsWith("/") ? outputdir : outputdir + "/";
 		
 		int iconsize = 20;
 		int fontsize = 18;
-				
-		File tfile = null;
-		Font font = null;
-		
+
+		File tfile;
+		Font font;
+
 		FileInputStream fi = null;
 		
-		BufferedImage image = null;
+		BufferedImage image;
 		Graphics2D graphics = null;
 		
 		Color fontcolor = Color.BLACK;
 		
-		if (params.containsKey("color") == true)
+		if (params.containsKey("color"))
 		{
 			fontcolor = FontConverter.hex2Rgb(params.get("color"));
 		}
 		
-		if (params.containsKey("iconsize") == true)
+		if (params.containsKey("iconsize"))
 		{
 			iconsize = Integer.parseInt(params.get("iconsize"));
 		}
 		
-		if (params.containsKey("fontsize") == true)
+		if (params.containsKey("fontsize"))
 		{
 			iconsize = Integer.parseInt(params.get("fontsize"));
 		}
@@ -103,38 +103,26 @@ public class FontConverter
 		{
 			ex.printStackTrace();
 		}
-		finally
-		{
-			try
-			{
-				if (graphics != null)
-				{
+		finally {
+			try {
+				if (graphics != null) {
 					graphics.dispose();
 				}
-				graphics = null;
-				
-				image = null;
-				
-				if (fi != null)
-				{
+
+				if (fi != null) {
 					fi.close();
 				}
-				fi = null;
-			}
-			catch (Exception e)
-			{
-				
+			} catch (Exception ignored) {
 			}
 		}
 	}
 	
 	public static Color hex2Rgb(String colorStr) 
 	{
-		Color c = new Color(
+		return new Color(
 	            Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
 	            Integer.valueOf( colorStr.substring( 3, 5 ), 16 ),
-	            Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) ); 
-	    return c;
+	            Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
 	}
 	
 	public Map<String, String> loadFontMap(String listfilename)
@@ -147,45 +135,38 @@ public class FontConverter
 	    
 	    String line = null;
 	    
-		try
-		{
+		try {
 			f = new File(listfilename);
-			
+
 			fr = new FileReader(f);
 			br = new BufferedReader(fr);
 
-			while( (line = br.readLine()) != null ) 
-			{
-				if (line.startsWith(";") == false && line.startsWith("//") == false) // comment
+			while ((line = br.readLine()) != null) {
+				if (!line.startsWith(";") && !line.startsWith("//")) // comment
 				{
 					int n = line.indexOf(":");
-					if (n > -1)
-					{
+					if (n > -1) {
 						String name = line.substring(0, n).trim();
-						String value = line.substring(n+1).trim();
-						
-						if (value.endsWith(",") == true)
-						{
-							value = value.substring(0, value.length()-1).trim();
+						String value = line.substring(n + 1).trim();
+
+						if (value.endsWith(",")) {
+							value = value.substring(0, value.length() - 1).trim();
 						}
-						
-						if (name.startsWith("\"") == true && name.endsWith("\"") == true && name.length() > 2)
-						{
+
+						if (name.startsWith("\"") && name.endsWith("\"") && name.length() > 2) {
 							name = name.substring(1, name.length() - 1);
 						}
-						
-						if (value.startsWith("\"") == true && value.endsWith("\"") == true && value.length() > 2)
-						{
+
+						if (value.startsWith("\"") && value.endsWith("\"") && value.length() > 2) {
 							value = value.substring(1, value.length() - 1);
-							
-							if (value.startsWith("\\") == true && value.charAt(1) == 'u')
-							{
-								Integer code = Integer.parseInt(value.substring(2), 16);
+
+							if (value.startsWith("\\") && value.charAt(1) == 'u') {
+								int code = Integer.parseInt(value.substring(2), 16);
 								char ch = Character.toChars(code)[0];
 								value = Character.toString(ch);
 							}
 						}
-						
+
 						fontmap.put(name, value);
 					}
 				}
@@ -195,21 +176,14 @@ public class FontConverter
 		{
 			System.err.println(">> Error while reading list file : " + listfilename);
 		}
-		finally
-		{
-			try
-			{
+		finally {
+			try {
 				if (br != null)
 					br.close();
-				br = null;
-				
+
 				if (fr != null)
 					fr.close();
-				fr = null;
-			}
-			catch (Exception e)
-			{
-				
+			} catch (Exception ignored) {
 			}
 		}
 		
@@ -225,37 +199,37 @@ public class FontConverter
 	
 	public static void main(String[] args) 
 	{
-		Map<String, String> params = new HashMap<String, String>();
-		
+		Map<String, String> params = new HashMap<>();
+
 		for (int i=0; i < args.length; i++)
 		{
-			String arg = args[i]; 
+			String arg = args[i];
 			String value = null;
-			
-			if (arg.startsWith("--") == true)
+
+			if (arg.startsWith("--"))
 			{
 				arg = arg.substring(2);
-				
+
 				int n = arg.indexOf("=");
 				if (n > -1)
 				{
 					value = arg.substring(n+1);
 					arg = arg.substring(0, n);
 				}
-				
-				if (arg.equals("help") == true)
+
+				if (arg.equals("help"))
 				{
 					printUsage();
 					return;
 				}
-				else if (value != null && value.equals("") == false)
+				else if (value != null && !value.equals(""))
 				{
 					params.put(arg, value);
 				}
 			}
 		}
 		
-		if (params.containsKey("font") == false || params.containsKey("output") == false || params.containsKey("list") == false)
+		if (!params.containsKey("font") || !params.containsKey("output") || !params.containsKey("list"))
 		{
 			printUsage();
 			return;
@@ -263,9 +237,5 @@ public class FontConverter
 		
 		FontConverter font = new FontConverter();
 		font.doConvert(params);
-		
-		font = null;
-		
-		return;
 	}
 }
